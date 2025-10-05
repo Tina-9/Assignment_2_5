@@ -1,0 +1,3 @@
+/Users/fay/XIN_Assignment_2/cmake-build-debug/CMakeFiles/XIN_Assignment_2.dir
+/Users/fay/XIN_Assignment_2/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/fay/XIN_Assignment_2/cmake-build-debug/CMakeFiles/rebuild_cache.dir
