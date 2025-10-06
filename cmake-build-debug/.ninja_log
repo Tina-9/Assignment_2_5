@@ -1,6 +1,6 @@
 # ninja log v6
 3	1592	1759716737229263663	CMakeFiles/XIN_Assignment_2.dir/world.cpp.o	63da0fb22ac79551
 3	1599	1759716737228864409	CMakeFiles/XIN_Assignment_2.dir/point.cpp.o	11fe4262aef33eb7
+1632	1722	1759716738858128380	XIN_Assignment_2	299cc245fd6dabf
 4	1601	1759716737230326543	CMakeFiles/XIN_Assignment_2.dir/robot.cpp.o	a58d722f3c356dfc
 2	1632	1759716737228254307	CMakeFiles/XIN_Assignment_2.dir/main.cpp.o	67b68446cc5b4b09
-1632	1722	1759716738858128380	XIN_Assignment_2	299cc245fd6dabf

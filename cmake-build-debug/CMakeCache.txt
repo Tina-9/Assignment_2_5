@@ -149,7 +149,7 @@ CMAKE_PROJECT_DESCRIPTION:STATIC=
 CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=XIN_Assignment_2
+CMAKE_PROJECT_NAME:STATIC=XIN_Assignment_2_5
 
 //Path to a program.
 CMAKE_RANLIB:FILEPATH=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib
@@ -215,6 +215,15 @@ CMAKE_TAPI:FILEPATH=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeD
 // during the make.  This is useful for debugging only. With Visual
 // Studio IDE projects all commands are done without /nologo.
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
+
+//Value Computed by CMake
+XIN_Assignment_2_5_BINARY_DIR:STATIC=/Users/fay/csc211H/HW2/XIN_Assignment_2_5/cmake-build-debug
+
+//Value Computed by CMake
+XIN_Assignment_2_5_IS_TOP_LEVEL:STATIC=ON
+
+//Value Computed by CMake
+XIN_Assignment_2_5_SOURCE_DIR:STATIC=/Users/fay/csc211H/HW2/XIN_Assignment_2_5
 
 //Value Computed by CMake
 XIN_Assignment_2_BINARY_DIR:STATIC=/Users/fay/csc211H/HW2/XIN_Assignment_2_5/cmake-build-debug

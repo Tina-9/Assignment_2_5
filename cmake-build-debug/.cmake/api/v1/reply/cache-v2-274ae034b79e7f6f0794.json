@@ -835,7 +835,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "XIN_Assignment_2"
+			"value" : "XIN_Assignment_2_5"
 		},
 		{
 			"name" : "CMAKE_RANLIB",
@@ -1132,6 +1132,42 @@
 			],
 			"type" : "BOOL",
 			"value" : "FALSE"
+		},
+		{
+			"name" : "XIN_Assignment_2_5_BINARY_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "/Users/fay/csc211H/HW2/XIN_Assignment_2_5/cmake-build-debug"
+		},
+		{
+			"name" : "XIN_Assignment_2_5_IS_TOP_LEVEL",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "ON"
+		},
+		{
+			"name" : "XIN_Assignment_2_5_SOURCE_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "/Users/fay/csc211H/HW2/XIN_Assignment_2_5"
 		},
 		{
 			"name" : "XIN_Assignment_2_BINARY_DIR",
