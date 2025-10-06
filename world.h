@@ -1,7 +1,3 @@
-//
-// Created by Fay on 10/4/25.
-//
-
 #ifndef WORLD_H
 #define WORLD_H
 #include "point.h"
@@ -19,8 +15,9 @@ public:
     const Point& getCoin(int i) const;
 
     void collCoin(int i);
+
+    void randomlyPlaceCoins(int max_board_size);
+
 };
-
-
 
 #endif //WORLD_H

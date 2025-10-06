@@ -49,8 +49,8 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "/Users/fay/XIN_Assignment_2/cmake-build-debug",
-		"source" : "/Users/fay/XIN_Assignment_2"
+		"build" : "/Users/fay/csc211H/HW2/XIN_Assignment_2_5/cmake-build-debug",
+		"source" : "/Users/fay/csc211H/HW2/XIN_Assignment_2_5"
 	},
 	"version" : 
 	{

@@ -1,0 +1,1 @@
+/usr/bin/c++ -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/XIN_Assignment_2_5.dir/main.cpp.o CMakeFiles/XIN_Assignment_2_5.dir/point.cpp.o CMakeFiles/XIN_Assignment_2_5.dir/world.cpp.o CMakeFiles/XIN_Assignment_2_5.dir/robot.cpp.o -o XIN_Assignment_2_5

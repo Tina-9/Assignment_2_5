@@ -1,7 +1,3 @@
-//
-// Created by Fay on 10/4/25.
-//
-
 #include "point.h"
 #include <iostream>
 using namespace std;

@@ -2,6 +2,8 @@
 #include <vector>
 #include <thread>
 #include <chrono>
+#include <cstdlib> // For system("cls") or system("clear")
+#include <limits> // For numeric_limits
 
 #include "robot.h"
 #include "world.h"
@@ -9,9 +11,10 @@
 
 using namespace std;
 
-//clear the whole screen and move the cursor to the top-left corner.
-//faster than clear.
+const int ANIMATION_DELAY_MS = 150;
 
+// Clear the whole screen and move the cursor to the top-left corner.
+// Uses ANSI codes which work well on Linux/macOS/modern Windows terminals (PowerShell/CMD).
 #define ANSI_CLEAR_SCREEN "\033[2J\033[1;1H"
 
 void clearScreen() {
@@ -20,147 +23,266 @@ void clearScreen() {
 }
 
 
-bool validate_and_convert(const char* arg, int& result, int min_val = 0, int max_val = MAX_NUM_OF_BOARD) {
-    result = atoi(arg);
-
-    if (result < min_val || result > max_val) {
-        cerr << "Input Validation Error: Coordinate " << arg << " is outside the valid range ["
-                  << min_val << ", " << max_val << "]." << endl;
-        return false;
-    }
-    return true;
-}
-
-
-void displayWorld(const World& world, const Robot& robot) {
+void displayWorld(const World& world, const Robot& player, const Robot& computer) {
     cout << endl;
-    cout << "-ROBOT WORLD BOARD-              " << endl;
+    cout << "   ------- BOARD ------" << endl;
 
+    // Print column coordinates
+    cout << "   ";
+    for (int
+        x = 0; x <= MAX_NUM_OF_BOARD; ++x) {
+        cout << x << " ";
+    }
+    cout << endl;
+    cout << "  ";
+    for (int x = 0; x <= MAX_NUM_OF_BOARD; ++x) {
+        cout << "--";
+    }
+    cout << "-" << endl;
+
+    // Loop through the Y-axis (rows) from top (MAX) to bottom (0)
     for (int y = MAX_NUM_OF_BOARD; y >= 0; --y) {
+        cout << y << " |"; // Print row coordinate
 
+        // Loop through the X-axis (columns)
         for (int x = 0; x <= MAX_NUM_OF_BOARD; ++x) {
-
             char symbol = '.';
 
-            if (robot.getX() == x && robot.getY() == y) {
-                symbol = 'R';
-            } else {
-                for (int i = 0; i < NUMCOIN_POSITION; ++i) {
-                    const Point& coin_loc = world.getCoin(i);
+            bool isPlayer = (player.getX() == x && player.getY() == y);
+            bool isComputer = (computer.getX() == x && computer.getY() == y);
+            bool hasCoin = false;
 
-                    if (coin_loc.getX() == x && coin_loc.getY() == y && coin_loc.getX() != 0) {
-                        symbol = 'C';
-                        break;
-                    }
+            // Check for coin at this location
+            for (int i = 0; i < NUMCOIN_POSITION; ++i) {
+                const Point& coin_loc = world.getCoin(i);
+
+                if (coin_loc.getX() == x && coin_loc.getY() == y && coin_loc.getX() != -1) {
+                    hasCoin = true;
+                    break;
                 }
             }
+
+            // Robot (P/C) > Coin (o) > Empty (.)
+            if (isPlayer && isComputer) {
+                // If both robots land on the same spot, show '!'
+                symbol = '!';
+            } else if (isPlayer) {
+                symbol = player.getSymbol();
+            } else if (isComputer) {
+                symbol = computer.getSymbol();
+            } else if (hasCoin) {
+                symbol = 'O'; // Coin symbol
+            }
+
             cout << symbol << " ";
         }
-        cout << " " << endl;
+        cout << "|" << endl; // End of row
     }
+    cout << "  ";
+    for (int x = 0; x <= MAX_NUM_OF_BOARD; ++x) {
+        cout << "--";
+    }
+    cout << "-" << endl;
 
-    cout << "R = Robot" << endl;
-    cout << "C = Coin" << endl;
+    // Display
+    cout << "\n------------------------" << endl;
+    cout << "Player-robot-'P': Coins: " << player.getFoundCoins()
+         << " | Moves: " << player.getMoves() << endl;
+    player.print(); // Prints position and orientation
+    cout << "\nComputer-robot-'C': Coins: " << computer.getFoundCoins()
+         << " | Moves: " << computer.getMoves() << endl;
+
+    computer.print(); // Prints position and orientation
+    cout << "------------------------\n" << endl;
+}
+
+void refreshDisplay(const World& world, const Robot& player, const Robot& computer) {
+    clearScreen();
+    displayWorld(world, player, computer);
+    std::cout.flush();
+    this_thread::sleep_for(chrono::milliseconds(ANIMATION_DELAY_MS));
 }
 
 
-int main(int argc, char* argv[]) {
+bool handlePlayerTurn(Robot& player, World& world, const Robot& computer) {
+    char option;
+    bool valid_action = false;
 
-    if (argc != 7) {
-        cerr << "Error: Expected 6 command-line arguments (x1 y1 x2 y2 x3 y3), received " << argc - 1 << "." << endl;
-        cerr << "Usage: " << argv[0] << " <coin1-x> <coin1-y> <coin2-x> <coin2-y> <coin3-x> <coin3-y>" << endl;
-        return 1;
+    // Check for coin collection before the move (just in case)
+    player.lookForCoin(world);
+
+    cout << "Player 'P' Turn. Enter command ";
+    cout << "F-Forward | T-TurnCW | A-TurnAntiCW | Q:Quit";
+
+
+    // Read and ignore any remaining newline characters before reading input
+    if (cin.peek() == '\n') cin.ignore();
+    cin >> option;
+
+    // Convert to uppercase
+    option = toupper(option);
+
+    bool moved = false;
+    bool turned = false;
+
+    switch (option) {
+        case 'Q': // Quit
+            return true;
+        case 'F': // Forward
+            cout << "Player moves to forward." << endl;
+            moved = player.forward();
+            if (!moved) {
+                cout << "Cannot move forward, you are hitting the wall." << endl;
+            }
+            valid_action = moved;
+            break;
+        case 'T': // Turn Clockwise
+            cout << "To turn clockwise." << endl;
+            player.turnCW();
+            turned = true;
+            valid_action = true;
+            break;
+        case 'A': // Turn Anti-Clockwise
+            cout << "To turn anti-clockwise." << endl;
+            player.turnAntiCW();
+            turned = true;
+            valid_action = true;
+            break;
+        default:
+            cout << "Invalid command. Please use F, T, A, or Q." << endl;
+            break;
     }
 
+    if (valid_action) {
+        // Refresh display to show the result of the action
+        refreshDisplay(world, player, computer);
+
+        // Check for coin collection after the move
+        player.lookForCoin(world);
+    }
+
+    // Return false if the game continues (not quit)
+    return false;
+}
+
+void handleComputerTurn(Robot& computer, World& world, const Robot& player) {
+    cout << "Computer 'C' Turn: Thinking..." << endl;
+
+    // Check for coin collection before the move (if the player just missed one)
+    computer.lookForCoin(world);
+
+    // AI makes one move (which might be a turn or a forward step)
+    bool moved_or_turned = computer.aIMovement(world);
+
+    if (moved_or_turned) {
+        cout << "Computer moved/turned." << endl;
+
+        // refresh screen display to show the animation step
+        refreshDisplay(world, player, computer);
+
+        // Check for coin collection after the move
+        computer.lookForCoin(world);
+    } else {
+        cout << "Computer has nowhere to go or all coins are collected." << endl;
+    }
+
+    // show result
+    this_thread::sleep_for(chrono::milliseconds(500));
+}
+
+
+int main() {
     World robot_world;
-    int coord_value;
-    vector<int> coords;
+    Robot player_robot;
+    player_robot.init(0, 0, EAST, 'P');
+
+    // Computer starts at (MAX_NUM_OF_BOARD, MAX_NUM_OF_BOARD) (9,9) facing WEST, symbol 'C'
+    Robot computer_robot;
+    computer_robot.init(MAX_NUM_OF_BOARD, MAX_NUM_OF_BOARD, WEST, 'C');
+
+    robot_world.randomlyPlaceCoins(MAX_NUM_OF_BOARD);
+
+    // Initial display before the game loop starts
+    clearScreen();
+    cout << "--- Roomba VS Robot  ---" << endl;
+    cout << "Player 'P' starts at (0,0). Computer 'C' starts at (" << MAX_NUM_OF_BOARD << ","
+         << MAX_NUM_OF_BOARD << ")." << endl;
+
+    cout << "First find the " << NUMCOIN_POSITION << " coins wins!" << endl;
+    cout << "Please press enter to start the game." << endl;
 
 
-    for (int i = 1; i <= 6; ++i) {
+    // Clear any existing input buffer,
+    // then wait for the user to press Enter
 
-        if (validate_and_convert(argv[i], coord_value)) {
-            coords.push_back(coord_value);
-        } else {
-            return 1;
-        }
-    }
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
 
-    for (int i = 0; i < NUMCOIN_POSITION; ++i) {
-        robot_world.setOrientation(i, coords[i * 2], coords[i * 2 + 1]);
-    }
+    bool game_quit = false;
+    int total_coins_collected = 0;
 
-    Robot explorer;
-    explorer.init();
+    while (!game_quit && total_coins_collected < NUMCOIN_POSITION) {
 
-//before while loop, clear the screen
-    // cout << "--- Initial Setup ---" << endl;
-    robot_world.print();
-    displayWorld(robot_world, explorer);
+        // Roomba-palyer
+        refreshDisplay(robot_world, player_robot, computer_robot);
 
+        bool valid_action = false;
+        while(!valid_action && !game_quit) {
+            int pre_moves = player_robot.getMoves();
+            int pre_coins = player_robot.getFoundCoins();
 
-    //move logic: after movement, then clear the screen, and delay.
+            // updates
+            game_quit = handlePlayerTurn(player_robot, robot_world, computer_robot);
 
-    while (explorer.getFoundCoins() < NUMCOIN_POSITION) {
+            // check if a move or turn successful
+            if (player_robot.getMoves() > pre_moves || player_robot.getFoundCoins() > pre_coins || game_quit) {
+                valid_action = true;
+            } else if (!game_quit) {
 
-        this_thread::sleep_for(chrono::milliseconds(200));
-        clearScreen();
-
-        cout << "--- Robot Search Coins ---" << endl;
-        cout << "Moves: " << explorer.getMoves() << " | Coins Found: "
-             << explorer.getFoundCoins() << endl;
-
-        explorer.print();
-
-        //check if there are more coins.
-        bool coin_found_now = explorer.lookForCoin(robot_world);
-
-        // print board
-        displayWorld(robot_world, explorer);
-
-        std::cout.flush();
-
-        // when find the coin, show the string.
-        if (coin_found_now) {
-            this_thread::sleep_for(chrono::milliseconds(100000));
-        } else {
-            this_thread::sleep_for(chrono::milliseconds(100));
-        }
-
-        if (explorer.getFoundCoins() == NUMCOIN_POSITION) break;
-
-        if (explorer.forward()) {
-            continue;
-        }
-
-        // check if the robot at the eastEnd/westEnd
-        if (explorer.getOrientation() == EAST) {
-            if (!explorer.zag()) {
-                break;
+                // failed move
+                cout << "Input was invalid. Enter (F/T/A) to move." << endl;
             }
-        }else if (explorer.getOrientation() == WEST) {
-            if (!explorer.zig()) {
-                break;
-            }
-        }
-    }
 
-    unsigned int total_moves = explorer.getMoves();
+            total_coins_collected = player_robot.getFoundCoins() + computer_robot.getFoundCoins();
+            if (total_coins_collected >= NUMCOIN_POSITION || game_quit) break;
+        }
+        if (game_quit || total_coins_collected >= NUMCOIN_POSITION) break;
+
+        // computer-robot
+        refreshDisplay(robot_world, player_robot, computer_robot);
+        handleComputerTurn(computer_robot, robot_world, player_robot);
+        total_coins_collected = player_robot.getFoundCoins() + computer_robot.getFoundCoins();
+
+    }
 
     clearScreen();
-    displayWorld(robot_world, explorer);
+    displayWorld(robot_world, player_robot, computer_robot);
 
-    std::cout.flush();
+    cout << "\n********************************" << endl;
+    if (game_quit) {
+        cout << "Game terminate: Player quit." << endl;
+    } else {
+        cout << "GAME OVER! All " << NUMCOIN_POSITION << " coins collected." << endl;
+    }
+    cout << "*********************************" << endl;
 
-    this_thread::sleep_for(chrono::milliseconds(50));
+    int p_coins = player_robot.getFoundCoins();
+    int c_coins = computer_robot.getFoundCoins();
+
+    cout << "Player-robot-'P' found coins number: " << p_coins << endl;
+    cout << "Computer-robot-'C' found coins number: " << c_coins << endl;
+
 
     cout << "\n--- Record ---" << endl;
-    cout << "The robot completes search for coins." << endl;
-    cout << "Total coins found: " << explorer.getFoundCoins() << " / " << NUMCOIN_POSITION << "." << endl;
-    cout << "The robot moved " << total_moves << " steps." << endl;
+    if (p_coins > c_coins) {
+        cout << "!!! Player-robot-'P' WINS !!!" << endl;
+    } else if (c_coins > p_coins) {
+        cout << "!!! Computer-robot-'C' WINS !!!" << endl;
+    } else {
+        cout << "!!! It's a tie !!!" << endl;
+    }
+    cout << "--------------------" << endl;
 
-    std::cout.flush();
 
     return 0;
 }

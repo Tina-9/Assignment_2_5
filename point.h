@@ -1,7 +1,3 @@
-//
-// Created by Fay on 10/4/25.
-//
-
 #ifndef POINT_H
 #define POINT_H
 

@@ -55,7 +55,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/Users/fay/XIN_Assignment_2/cmake-build-debug"
+			"value" : "/Users/fay/csc211H/HW2/XIN_Assignment_2_5/cmake-build-debug"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -495,7 +495,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/Users/fay/XIN_Assignment_2/cmake-build-debug/CMakeFiles/pkgRedirects"
+			"value" : "/Users/fay/csc211H/HW2/XIN_Assignment_2_5/cmake-build-debug/CMakeFiles/pkgRedirects"
 		},
 		{
 			"name" : "CMAKE_GENERATOR",
@@ -555,7 +555,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/Users/fay/XIN_Assignment_2"
+			"value" : "/Users/fay/csc211H/HW2/XIN_Assignment_2_5"
 		},
 		{
 			"name" : "CMAKE_INSTALL_NAME_TOOL",
@@ -1143,7 +1143,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/Users/fay/XIN_Assignment_2/cmake-build-debug"
+			"value" : "/Users/fay/csc211H/HW2/XIN_Assignment_2_5/cmake-build-debug"
 		},
 		{
 			"name" : "XIN_Assignment_2_IS_TOP_LEVEL",
@@ -1167,7 +1167,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/Users/fay/XIN_Assignment_2"
+			"value" : "/Users/fay/csc211H/HW2/XIN_Assignment_2_5"
 		}
 	],
 	"kind" : "cache",
